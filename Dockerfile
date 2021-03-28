@@ -9,4 +9,4 @@ RUN chown -R 1000:0 /work
 ENV HOME=/work
 USER 1000
 
-#ENTRYPOINT [ "/work/entrypoint.sh" ]
+ENTRYPOINT [ "/work/entrypoint.sh" ]
