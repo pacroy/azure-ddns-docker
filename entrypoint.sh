@@ -23,7 +23,7 @@ printf "  CMD IP: %s\n" "${cmd_ip}"
 
 if [ "${dns_ip}" != "${cmd_ip}" ]; then
     printf "\nUpdating IP...\n"
-    az network dns record-set a update --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}" --remove arecords 0
+    az network dns record-set a update --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}" --remove arecords 0  > /dev/null
     az network dns record-set a update --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}" --add arecords ipv4Address="${cmd_ip}"
 else
     printf "\nNo update required\n"
