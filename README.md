@@ -14,6 +14,8 @@ az ad sp create-for-rbac --name "{app-id-uri}" --role Contributor --scope "{reso
 
 ## Execute
 
+### Locally
+
 ```sh
 export CLIENT_ID="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 export CLIENT_SECRET="your-client-secret"
@@ -23,4 +25,19 @@ export DNSZONE="mydomain.com"
 export RECORD_NAME="@"
 export COMMAND_IP="dig +short myotherdomain.com"
 ./entrypoint.sh
+```
+
+### Docker
+
+```sh
+docker build -t azure-ddns .
+docker run -it --rm \          
+    -e CLIENT_ID="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" \
+    -e CLIENT_SECRET="your-client-secret" \
+    -e TENANT_ID="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" \
+    -e RESOURCE_GROUP="rg-mygroup" \
+    -e DNSZONE="mydomain.com" \
+    -e RECORD_NAME="@" \
+    -e COMMAND_IP="dig +short pacroy.thddns.net" \
+    azure-ddns /work/entrypoint.sh
 ```
