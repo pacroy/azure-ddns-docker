@@ -16,7 +16,7 @@ printf "\nLogging in...\n"
 az login --service-principal -u "${CLIENT_ID}" -p "${CLIENT_SECRET}" --tenant "${TENANT_ID}" --output table
 
 printf "\nChecking IP...\n"
-dns_ip=$(az network dns record-set a show --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}")
+dns_ip=$(az network dns record-set a show --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}" | jq -r '.arecords[0].ipv4Address')
 cmd_ip=$(${COMMAND_IP:-"curl -fsSL ipv4.icanhazip.com"})
 printf "  DNS IP: %s\n" "${dns_ip}"
 printf "  CMD IP: %s\n" "${cmd_ip}"
