@@ -27,4 +27,5 @@ if [ "${dns_ip}" != "${cmd_ip}" ]; then
     az network dns record-set a update --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}" --add arecords ipv4Address="${cmd_ip}"
 else
     printf "\nNo update required\n"
+    az network dns record-set a show --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}"
 fi
