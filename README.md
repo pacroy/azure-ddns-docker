@@ -1,7 +1,10 @@
 # azure-ddns-docker
-Docker image for Dynamic DNS with Azure DNS
 
-## Create Service Principal
+Docker image to update Azure DNS records to mimic Dynamic DNS service.
+
+## Service Principal
+
+Create a new service principal for querying and updating Azure DNS records
 
 ```sh
 az ad sp create-for-rbac --name "{app-id-uri}" --role Contributor --scope "{resource-id}"
@@ -14,20 +17,7 @@ az ad sp create-for-rbac --name "{app-id-uri}" --role Contributor --scope "{reso
 
 ## Execute
 
-### Local
-
-```sh
-export CLIENT_ID="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-export CLIENT_SECRET="your-client-secret"
-export TENANT_ID="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-export RESOURCE_GROUP="rg-mygroup"
-export DNSZONE="mydomain.com"
-export RECORD_NAME="@"
-export COMMAND_IP="dig +short myotherdomain.com"
-./entrypoint.sh
-```
-
-### Docker
+Execute these commands to build and run the docker image
 
 ```sh
 docker build --no-cache -t azure-ddns .
@@ -38,6 +28,6 @@ docker run -it --rm \
     -e RESOURCE_GROUP="rg-mygroup" \
     -e DNSZONE="mydomain.com" \
     -e RECORD_NAME="@" \
-    -e COMMAND_IP="dig +short pacroy.thddns.net" \
+    -e COMMAND_IP="dig +short myotherdomain.com" \
     azure-ddns
 ```
