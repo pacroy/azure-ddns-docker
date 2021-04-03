@@ -17,12 +17,18 @@ jobs:
       - name: Docker build
         shell: bash
         run: |
-          docker build -t azure-ddns:${GITHUB_SHA} .
-      - name: Docker Push
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-        shell: bash
-        run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://docker.pkg.github.com -u "${GITHUB_ACTOR}" --password-stdin
-          docker tag azure-ddns:${GITHUB_SHA} docker.pkg.github.com/${GITHUB_REPOSITORY}/azure-ddns:${GITHUB_SHA}
-          docker push docker.pkg.github.com/${GITHUB_REPOSITORY}/azure-ddns:${GITHUB_SHA}
-          docker logout https://docker.pkg.github.com
+          echo "GITHUB_REF     : ${GITHUB_REF}"
+          echo "GITHUB_HEAD_REF: ${GITHUB_HEAD_REF}"
+          echo "GITHUB_BASE_REF: ${GITHUB_BASE_REF}"
+          
+          #docker build -t azure-ddns:${GITHUB_SHA} .
+      # - name: Docker Push
+      #   if: ${{ github.event_name == 'pull_request' }}
+      #   shell: bash
+      #   run: |
+      #     echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://docker.pkg.github.com -u "${GITHUB_ACTOR}" --password-stdin
+      #     docker tag azure-ddns:${GITHUB_SHA} docker.pkg.github.com/${GITHUB_REPOSITORY}/azure-ddns:${GITHUB_SHA}
+      #     docker push docker.pkg.github.com/${GITHUB_REPOSITORY}/azure-ddns:${GITHUB_SHA}
+      #     docker tag azure-ddns:${GITHUB_SHA} docker.pkg.github.com/${GITHUB_REPOSITORY}/azure-ddns:${GITHUB_HEAD_REF}
+      #     docker push docker.pkg.github.com/${GITHUB_REPOSITORY}/azure-ddns:${GITHUB_HEAD_REF}
+      #     docker logout https://docker.pkg.github.com
