@@ -30,12 +30,12 @@ jobs:
           echo "GITHUB_SHA  : ${GITHUB_SHA}"
           echo "::endgroup::"
 
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://docker.pkg.github.com -u "${GITHUB_ACTOR}" --password-stdin
-          docker tag azure-ddns:${GITHUB_SHA} docker.pkg.github.com/${GITHUB_REPOSITORY}/azure-ddns:${GITHUB_SHA}
-          docker push docker.pkg.github.com/${GITHUB_REPOSITORY}/azure-ddns:${GITHUB_SHA}
-          docker tag azure-ddns:${GITHUB_SHA} docker.pkg.github.com/${GITHUB_REPOSITORY}/azure-ddns:pr-${PR_NUMBER}
-          docker push docker.pkg.github.com/${GITHUB_REPOSITORY}/azure-ddns:pr-${PR_NUMBER}
-          docker logout https://docker.pkg.github.com
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
+          docker tag azure-ddns:${GITHUB_SHA} ghcr.io/${GITHUB_REPOSITORY}/azure-ddns:${GITHUB_SHA}
+          docker push ghcr.io/${GITHUB_REPOSITORY}/azure-ddns:${GITHUB_SHA}
+          docker tag azure-ddns:${GITHUB_SHA} ghcr.io/${GITHUB_REPOSITORY}/azure-ddns:pr-${PR_NUMBER}
+          docker push ghcr.io/${GITHUB_REPOSITORY}/azure-ddns:pr-${PR_NUMBER}
+          docker logout https://ghcr.io
       - name: Docker Push
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         shell: bash
