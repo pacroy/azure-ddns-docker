@@ -11,8 +11,7 @@ jobs:
     env:
       IMAGE_NAME: azure-ddns
     steps:
-      - name: Print Variables
-        if: ${{ github.event.base_ref == 'refs/heads/main' }}
+      - name: Docker Tag
         shell: bash
         env:
           REPOSITORY_OWNER: ${{ github.repository_owner }}
