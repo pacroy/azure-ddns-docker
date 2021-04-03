@@ -8,6 +8,8 @@ jobs:
   build:
     name: Docker Tag
     runs-on: ubuntu-20.04
+    env:
+      IMAGE_NAME: azure-ddns
     steps:
       - name: Print Variables
         if: ${{ github.event.base_ref == 'refs/heads/main' }}
@@ -30,7 +32,7 @@ jobs:
           echo "::endgroup::"
 
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://${REGISTRY_HOSTNAME} -u "${GITHUB_ACTOR}" --password-stdin
-          docker pull ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/azure-ddns:${GITHUB_SHA}
-          docker tag ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/azure-ddns:${GITHUB_SHA} ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/azure-ddns:${TAG_NAME}
-          docker push ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/azure-ddns:${TAG_NAME}
+          docker pull ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/${IMAGE_NAME}:${GITHUB_SHA}
+          docker tag ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/${IMAGE_NAME}:${GITHUB_SHA} ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/${IMAGE_NAME}:${TAG_NAME}
+          docker push ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/${IMAGE_NAME}:${TAG_NAME}
           docker logout https://${REGISTRY_HOSTNAME}
