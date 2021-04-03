@@ -38,10 +38,10 @@ jobs:
           REGISTRY_HOSTNAME: ghcr.io
         run: |
           echo "::group::Parameters"
-          echo "REPOSITORY_OWNER: ${REPOSITORY_OWNER}"
-          echo "REGISTRY_URL    : ${REGISTRY_URL}"
-          echo "GITHUB_ACTOR    : ${GITHUB_ACTOR}"
-          echo "GITHUB_SHA      : ${GITHUB_SHA}"
+          echo "REPOSITORY_OWNER : ${REPOSITORY_OWNER}"
+          echo "REGISTRY_HOSTNAME: ${REGISTRY_HOSTNAME}"
+          echo "GITHUB_ACTOR     : ${GITHUB_ACTOR}"
+          echo "GITHUB_SHA       : ${GITHUB_SHA}"
           echo "::endgroup::"
 
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://${REGISTRY_HOSTNAME} -u "${GITHUB_ACTOR}" --password-stdin
