@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/azure-cli:2.21.0
+FROM ghcr.io/pacroy/azure-cli:latest
 
 # Install dig
 RUN apk add --no-cache bind-tools
