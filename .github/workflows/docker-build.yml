@@ -19,6 +19,7 @@ jobs:
         run: |
           docker build -t azure-ddns:${GITHUB_SHA} .
       - name: Docker Push
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         shell: bash
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://docker.pkg.github.com -u "${GITHUB_ACTOR}" --password-stdin
