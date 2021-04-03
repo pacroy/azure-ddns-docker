@@ -34,3 +34,19 @@ jobs:
           docker tag azure-ddns:${GITHUB_SHA} docker.pkg.github.com/${GITHUB_REPOSITORY}/azure-ddns:pr-${PR_NUMBER}
           docker push docker.pkg.github.com/${GITHUB_REPOSITORY}/azure-ddns:pr-${PR_NUMBER}
           docker logout https://docker.pkg.github.com
+      - name: Docker Push
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        shell: bash
+        run: |
+          echo "::group::Parameters"
+          echo "GITHUB_REF  : ${GITHUB_REF}"
+          echo "GITHUB_ACTOR: ${GITHUB_ACTOR}"
+          echo "GITHUB_SHA  : ${GITHUB_SHA}"
+          echo "::endgroup::"
+
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
+          docker tag azure-ddns:${GITHUB_SHA} docker.pkg.github.com/${GITHUB_REPOSITORY}/azure-ddns:${GITHUB_SHA}
+          docker push docker.pkg.github.com/${GITHUB_REPOSITORY}/azure-ddns:${GITHUB_SHA}
+          docker tag azure-ddns:${GITHUB_SHA} docker.pkg.github.com/${GITHUB_REPOSITORY}/azure-ddns:latest
+          docker push docker.pkg.github.com/${GITHUB_REPOSITORY}/azure-ddns:latest
+          docker logout https://ghcr.io
