@@ -25,5 +25,9 @@ jobs:
           echo "GITHUB_SHA       : ${GITHUB_SHA}"
           echo "::endgroup::"
 
+          echo "::group::event"
+          cat ${{ github.event_path }}
+          echo "::endgroup::"
+
           # echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://${REGISTRY_HOSTNAME} -u "${GITHUB_ACTOR}" --password-stdin
           # docker pull ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/azure-ddns:${GITHUB_SHA}
