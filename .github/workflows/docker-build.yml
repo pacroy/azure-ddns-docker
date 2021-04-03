@@ -20,4 +20,13 @@ jobs:
           set -o errexit
           set -o pipefail
 
-          docker build -t azure-ddns .
+          docker build -t azure-ddns:${GITHUB_SHA} .
+      - name: Docker Push
+        shell: bash
+        run: |
+          set -o errexit
+          set -o pipefail
+
+          cat ~/TOKEN.txt | docker login https://docker.pkg.github.com -u USERNAME --password-stdin
+          docker tag azure-ddns:${GITHUB_SHA} docker.pkg.github.com/${GITHUB_REPOSITORY}/azure-ddns:${GITHUB_SHA}
+          docker push docker.pkg.github.com/${GITHUB_REPOSITORY}/azure-ddns:${GITHUB_SHA}
