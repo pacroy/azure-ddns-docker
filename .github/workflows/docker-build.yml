@@ -20,5 +20,4 @@ jobs:
           set -o errexit
           set -o pipefail
 
-          docker built -t azure-ddns .
-          
+          docker build -t azure-ddns .
