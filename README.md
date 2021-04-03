@@ -1,5 +1,7 @@
 # azure-ddns-docker
 
+[![Lint Code Base](https://github.com/pacroy/azure-ddns-docker/actions/workflows/linter.yml/badge.svg)](https://github.com/pacroy/azure-ddns-docker/actions/workflows/linter.yml) [![Docker Build](https://github.com/pacroy/azure-ddns-docker/actions/workflows/docker-build.yml/badge.svg)](https://github.com/pacroy/azure-ddns-docker/actions/workflows/docker-build.yml)
+
 Docker image to update Azure DNS records to mimic Dynamic DNS service.
 
 ## Usage

@@ -11,13 +11,15 @@ jobs:
   build:
     name: Docker Build
     runs-on: ubuntu-20.04
+    env:
+      IMAGE_NAME: azure-ddns
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
       - name: Docker build
         shell: bash
         run: |
-          docker build -t azure-ddns:${GITHUB_SHA} .
+          docker build -t ${IMAGE_NAME}:${GITHUB_SHA} .
       - name: Test Image
         shell: bash
         run: |
@@ -29,22 +31,24 @@ jobs:
             -e DNSZONE="${{ secrets.DNSZONE }}" \
             -e RECORD_NAME="${{ secrets.RECORD_NAME }}" \
             -e COMMAND_IP="${{ secrets.COMMAND_IP }}" \
-            azure-ddns:${GITHUB_SHA}
+            ${IMAGE_NAME}:${GITHUB_SHA}
       - name: Docker Push
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         shell: bash
+        env:
+          REPOSITORY_OWNER: ${{ github.repository_owner }}
+          REGISTRY_HOSTNAME: ghcr.io
         run: |
-          OWNER=$(echo "${GITHUB_REPOSITORY}" | awk -F'/' '{print $1}')
           echo "::group::Parameters"
-          echo "GITHUB_REPOSITORY: ${GITHUB_REPOSITORY}"
-          echo "OWNER            : ${OWNER}"
+          echo "REPOSITORY_OWNER : ${REPOSITORY_OWNER}"
+          echo "REGISTRY_HOSTNAME: ${REGISTRY_HOSTNAME}"
           echo "GITHUB_ACTOR     : ${GITHUB_ACTOR}"
           echo "GITHUB_SHA       : ${GITHUB_SHA}"
           echo "::endgroup::"
 
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
-          docker tag azure-ddns:${GITHUB_SHA} ghcr.io/${OWNER}/azure-ddns:${GITHUB_SHA}
-          docker push ghcr.io/${OWNER}/azure-ddns:${GITHUB_SHA}
-          docker tag azure-ddns:${GITHUB_SHA} ghcr.io/${OWNER}/azure-ddns:latest
-          docker push ghcr.io/${OWNER}/azure-ddns:latest
-          docker logout https://ghcr.io
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://${REGISTRY_HOSTNAME} -u "${GITHUB_ACTOR}" --password-stdin
+          docker tag ${IMAGE_NAME}:${GITHUB_SHA} ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/${IMAGE_NAME}:${GITHUB_SHA}
+          docker push ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/${IMAGE_NAME}:${GITHUB_SHA}
+          docker tag ${IMAGE_NAME}:${GITHUB_SHA} ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/${IMAGE_NAME}:latest
+          docker push ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/${IMAGE_NAME}:latest
+          docker logout https://${REGISTRY_HOSTNAME}
