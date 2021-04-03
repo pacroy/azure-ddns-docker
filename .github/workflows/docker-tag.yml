@@ -1,7 +1,8 @@
 name: Docker Tag
 
 on:
-  create
+  push:
+    tags: [ v* ]
 
 jobs:
   build:
@@ -9,13 +10,20 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Print Variables
-        shell: bash
-        run: |
-          echo "GITHUB_REF: ${GITHUB_REF}"
-          echo "GITHUB_SHA: ${GITHUB_SHA}"
-          echo "event_name: ${{ github.event_name }}"
-          echo "event_path: ${{ github.event_path }}"
 
-          echo "::group::event"
-          cat ${{ github.event_path }}
+        shell: bash
+        env:
+          REPOSITORY_OWNER: ${{ github.repository_owner }}
+          REGISTRY_HOSTNAME: ghcr.io
+          TAG_NAME: ${{ github.event.ref }}
+        run: |
+          echo "::group::Parameters"
+          echo "REPOSITORY_OWNER : ${REPOSITORY_OWNER}"
+          echo "REGISTRY_HOSTNAME: ${REGISTRY_HOSTNAME}"
+          echo "TAG_NAME         : ${TAG_NAME}"
+          echo "GITHUB_REF       : ${GITHUB_REF}"
+          echo "GITHUB_SHA       : ${GITHUB_SHA}"
           echo "::endgroup::"
+
+          # echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://${REGISTRY_HOSTNAME} -u "${GITHUB_ACTOR}" --password-stdin
+          # docker pull ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/azure-ddns:${GITHUB_SHA}
