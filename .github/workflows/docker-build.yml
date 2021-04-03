@@ -38,15 +38,17 @@ jobs:
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         shell: bash
         run: |
+          OWNER=$(echo "${GITHUB_REPOSITORY}" | awk -F'/' '{print $1}')
           echo "::group::Parameters"
-          echo "GITHUB_REF  : ${GITHUB_REF}"
-          echo "GITHUB_ACTOR: ${GITHUB_ACTOR}"
-          echo "GITHUB_SHA  : ${GITHUB_SHA}"
+          echo "GITHUB_REPOSITORY: ${GITHUB_REPOSITORY}"
+          echo "OWNER            : ${OWNER}"
+          echo "GITHUB_ACTOR     : ${GITHUB_ACTOR}"
+          echo "GITHUB_SHA       : ${GITHUB_SHA}"
           echo "::endgroup::"
 
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
-          docker tag azure-ddns:${GITHUB_SHA} ghcr.io/${GITHUB_REPOSITORY}/azure-ddns:${GITHUB_SHA}
-          docker push ghcr.io/${GITHUB_REPOSITORY}/azure-ddns:${GITHUB_SHA}
-          docker tag azure-ddns:${GITHUB_SHA} ghcr.io/${GITHUB_REPOSITORY}/azure-ddns:latest
-          docker push ghcr.io/${GITHUB_REPOSITORY}/azure-ddns:latest
+          docker tag azure-ddns:${GITHUB_SHA} ghcr.io/${OWNER}/azure-ddns:${GITHUB_SHA}
+          docker push ghcr.io/${OWNER}/azure-ddns:${GITHUB_SHA}
+          docker tag azure-ddns:${GITHUB_SHA} ghcr.io/${OWNER}/azure-ddns:latest
+          docker push ghcr.io/${OWNER}/azure-ddns:latest
           docker logout https://ghcr.io
