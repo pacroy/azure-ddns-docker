@@ -21,7 +21,7 @@ jobs:
       - name: Test Image
         shell: bash
         run: |
-          docker run -it --rm \                                                                      
+          docker run --interactive --rm \                                                                      
             -e CLIENT_ID="${{ secrets.CLIENT_ID }}" \
             -e CLIENT_SECRET="${{ secrets.CLIENT_SECRET }}" \
             -e TENANT_ID="${{ secrets.TENANT_ID }}" \
