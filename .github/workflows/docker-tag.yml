@@ -1,0 +1,21 @@
+name: Docker Tag
+
+on:
+  create
+
+jobs:
+  build:
+    name: Docker Tag
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Print Variables
+        shell: bash
+        run: |
+          echo "GITHUB_REF: ${GITHUB_REF}"
+          echo "GITHUB_SHA: ${GITHUB_SHA}"
+          echo "event_name: ${{ github.event_name }}"
+          echo "event_path: ${{ github.event_path }}"
+
+          echo "::group::event"
+          cat ${{ github.event_path }}
+          echo "::endgroup::"
