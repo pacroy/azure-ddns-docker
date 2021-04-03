@@ -10,18 +10,18 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Print Variables
-
+        if: ${{ github.event.base_ref == 'refs/heads/main' }}
         shell: bash
         env:
           REPOSITORY_OWNER: ${{ github.repository_owner }}
           REGISTRY_HOSTNAME: ghcr.io
-          TAG_NAME: ${{ github.event.ref }}
         run: |
+          TAG_NAME=$(echo ${GITHUB_REF} | awk -F'/' '{print $3}')
           echo "::group::Parameters"
           echo "REPOSITORY_OWNER : ${REPOSITORY_OWNER}"
           echo "REGISTRY_HOSTNAME: ${REGISTRY_HOSTNAME}"
-          echo "TAG_NAME         : ${TAG_NAME}"
           echo "GITHUB_REF       : ${GITHUB_REF}"
+          echo "TAG_NAME         : ${TAG_NAME}"
           echo "GITHUB_SHA       : ${GITHUB_SHA}"
           echo "::endgroup::"
 
@@ -29,5 +29,8 @@ jobs:
           cat ${{ github.event_path }}
           echo "::endgroup::"
 
-          # echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://${REGISTRY_HOSTNAME} -u "${GITHUB_ACTOR}" --password-stdin
-          # docker pull ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/azure-ddns:${GITHUB_SHA}
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://${REGISTRY_HOSTNAME} -u "${GITHUB_ACTOR}" --password-stdin
+          docker pull ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/azure-ddns:${GITHUB_SHA}
+          docker tag ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/azure-ddns:${GITHUB_SHA} ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/azure-ddns:${TAG_NAME}
+          docker push ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/azure-ddns:${TAG_NAME}
+          docker logout https://${REGISTRY_HOSTNAME}
