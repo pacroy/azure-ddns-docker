@@ -35,7 +35,7 @@ jobs:
         shell: bash
         env:
           REPOSITORY_OWNER: ${{ github.repository_owner }}
-          REGISTRY_URL: https://ghcr.io
+          REGISTRY_HOSTNAME: ghcr.io
         run: |
           echo "::group::Parameters"
           echo "REPOSITORY_OWNER: ${REPOSITORY_OWNER}"
@@ -44,9 +44,9 @@ jobs:
           echo "GITHUB_SHA      : ${GITHUB_SHA}"
           echo "::endgroup::"
 
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${REGISTRY_URL} -u "${GITHUB_ACTOR}" --password-stdin
-          docker tag azure-ddns:${GITHUB_SHA} ghcr.io/${REPOSITORY_OWNER}/azure-ddns:${GITHUB_SHA}
-          docker push ghcr.io/${REPOSITORY_OWNER}/azure-ddns:${GITHUB_SHA}
-          docker tag azure-ddns:${GITHUB_SHA} ghcr.io/${REPOSITORY_OWNER}/azure-ddns:latest
-          docker push ghcr.io/${REPOSITORY_OWNER}/azure-ddns:latest
-          docker logout ${REGISTRY_URL}
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://${REGISTRY_HOSTNAME} -u "${GITHUB_ACTOR}" --password-stdin
+          docker tag azure-ddns:${GITHUB_SHA} ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/azure-ddns:${GITHUB_SHA}
+          docker push ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/azure-ddns:${GITHUB_SHA}
+          docker tag azure-ddns:${GITHUB_SHA} ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/azure-ddns:latest
+          docker push ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/azure-ddns:latest
+          docker logout https://${REGISTRY_HOSTNAME}
