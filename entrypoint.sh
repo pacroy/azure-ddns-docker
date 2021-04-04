@@ -43,7 +43,10 @@ printf "UPDATE_IP_CMD : %s\n" "${UPDATE_IP_CMD}"
 printf "\nLogging in...\n"
 az login --service-principal -u "${CLIENT_ID}" -p "${CLIENT_SECRET}" --tenant "${TENANT_ID}" --output table
 
+printf "\nGetting update IP...\n"
 UPDATE_IP=$(${UPDATE_IP_CMD:-"curl -fsSL ipv4.icanhazip.com"})
+[ -z "UPDATE_IP" ] && >&2 echo "Failed to get the update IP" && exit 91
+
 for record in "$RECORD_NAMES"
 do
     check_and_update_dns_record "${RESOURCE_GROUP}" "${DNSZONE}" "${record}" "${UPDATE_IP}"
