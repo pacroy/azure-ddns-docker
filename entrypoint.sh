@@ -8,7 +8,8 @@ check_and_update_dns_record() {
     local RECORD_NAME="$3"
     local UPDATE_IP="$4"
 
-    local CURRENT_IP=$(az network dns record-set a show --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}" | jq -r '.arecords[0].ipv4Address')
+    local CURRENT_IP
+    CURRENT_IP=$(az network dns record-set a show --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}" | jq -r '.arecords[0].ipv4Address')
     printf "\nChecking DNS record '%s'...\n" "${RECORD_NAME}"
     printf "  CURRENT_IP: %s\n" "${CURRENT_IP}"
     printf "  UPDATE_IP : %s\n" "${UPDATE_IP}"
