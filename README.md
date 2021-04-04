@@ -47,3 +47,13 @@ docker run --interactive --rm \
     -e UPDATE_IP_CMD="dig +short myotherdomain.com" \
     azure-ddns
 ```
+
+| Parameter | Description |
+| --- | --- |
+| CLIENT_ID | AzureAD application ID or ID URI of the [service principal](#Service-Principal) |
+| CLIENT_SECRET | Secret of service principal |
+| TENANT_ID | AzureAD tenant ID |
+| RESOURCE_GROUP | Resource group of the DNS zone |
+| DNSZONE | DNS zone name |
+| RECORD_NAMES | DNS record names, separated by space |
+| UPDATE_IP_CMD | Command to get the up-to-date IP<br />Leave blank use default `curl -fsSL ipv4.icanhazip.com` to use the external IP of the host<br />Or set `dig +short myotherdomain.com` to clone IP from the other domain.  |
