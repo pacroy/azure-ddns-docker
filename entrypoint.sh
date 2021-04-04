@@ -3,6 +3,13 @@ set -o errexit
 set -o pipefail
 
 printf "\nChecking variables...\n"
+printf "CLIENT_ID     : ${CLIENT_ID}\n"
+printf "CLIENT_SECRET : ${CLIENT_SECRET}\n"
+printf "TENANT_ID     : ${TENANT_ID}\n"
+printf "RESOURCE_GROUP: ${RESOURCE_GROUP}\n"
+printf "DNSZONE       : ${DNSZONE}\n"
+printf "RECORD_NAME  : ${RECORD_NAME}\n"
+printf "COMMAND_IP    : ${COMMAND_IP}\n"
 [ -z "${CLIENT_ID}" ] && >&2 echo "CLIENT_ID is not set" && is_error="true"
 [ -z "${CLIENT_SECRET}" ] && >&2 echo "CLIENT_SECRET is not set" && is_error="true"
 [ -z "${TENANT_ID}" ] && >&2 echo "TENANT_ID is not set" && is_error="true"
