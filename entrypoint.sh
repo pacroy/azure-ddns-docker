@@ -26,7 +26,7 @@ check_and_update_dns_record() {
 
 printf "\nChecking variables...\n"
 printf "CLIENT_ID     : %s\n" "${CLIENT_ID}"
-printf "CLIENT_SECRET : %s\n" "${CLIENT_SECRET}"
+printf "CLIENT_SECRET : %s\n" "***"
 printf "TENANT_ID     : %s\n" "${TENANT_ID}"
 printf "RESOURCE_GROUP: %s\n" "${RESOURCE_GROUP}"
 printf "DNSZONE       : %s\n" "${DNSZONE}"

@@ -8,16 +8,27 @@ Docker image to update Azure DNS records to mimic Dynamic DNS service.
 
 ### Service Principal
 
-If you don't have a service principal yet, create a new one for querying and updating Azure DNS records
+If you don't have a service principal yet, you may create a new one as we will use it to query and update Azure DNS records.
 
 ```sh
-az ad sp create-for-rbac --name "{app-id-uri}" --role Contributor --scope "{resource-id}"
+az ad sp create-for-rbac --name "<APP_ID_URI>" --role "Contributor" --scope "<RESOURCE_ID>"
 ```
 
 | Parameter | Description |
 | --- | --- |
-| app-id-uri | Application ID URI<br />Example: `sp://ddns-updater` |
-| resource-id | DNS Zone Resource ID<br />Example: `/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/rg-mygroup/providers/Microsoft.Network/dnszones/mydomain.com` |
+| APP_ID_URI | Service principal's application ID URI<br />Example: `sp://ddns-updater` |
+| RESOURCE_ID | DNS Zone Resource ID<br />Example: `/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/rg-mygroup/providers/Microsoft.Network/dnszones/mydomain.com` |
+
+In case you already have one, you may want to add role assignment so it can query and update Azure DNS records.
+
+```sh
+az role assignment create --assignee "<APP_ID>" --role "Contributor" --scope "<RESOURCE_ID>"
+```
+
+| Parameter | Description |
+| --- | --- |
+| APP_ID | Service principal's application ID URI or ID URI |
+| RESOURCE_ID | DNS Zone Resource ID<br />Example: `/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/rg-mygroup/providers/Microsoft.Network/dnszones/mydomain.com` |
 
 ### Get Image
 
@@ -43,7 +54,17 @@ docker run --interactive --rm \
     -e TENANT_ID="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" \
     -e RESOURCE_GROUP="rg-mygroup" \
     -e DNSZONE="mydomain.com" \
-    -e RECORD_NAMES="subdomain1 subdomain2" \
+    -e RECORD_NAMES="record1 record2" \
     -e UPDATE_IP_CMD="dig +short myotherdomain.com" \
     azure-ddns
 ```
+
+| Parameter | Description |
+| --- | --- |
+| CLIENT_ID | AzureAD application ID or ID URI of the [service principal](#Service-Principal) |
+| CLIENT_SECRET | Secret of service principal |
+| TENANT_ID | AzureAD tenant ID |
+| RESOURCE_GROUP | Resource group of the DNS zone |
+| DNSZONE | DNS zone name |
+| RECORD_NAMES | DNS record names, separated by space |
+| UPDATE_IP_CMD | Command to get the up-to-date IP<br />Leave blank use default `curl -fsSL ipv4.icanhazip.com` to use the external IP of the host<br />Or set `dig +short myotherdomain.com` to clone IP from the other domain.  |
