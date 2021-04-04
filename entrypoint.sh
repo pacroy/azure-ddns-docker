@@ -16,9 +16,9 @@ check_and_update_dns_record() {
     if [ "${dns_ip}" != "${cmd_ip}" ]; then
         az network dns record-set a update --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}" --remove arecords 0  > /dev/null
         az network dns record-set a update --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}" --add arecords ipv4Address="${UPDATE_IP}"
-        printf "\nUpdate completed\n"
+        printf "  Update completed\n"
     else
-        printf "\nNo update required\n"
+        printf "  No update required\n"
     fi
 }
 
