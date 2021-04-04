@@ -14,9 +14,10 @@ check_and_update_dns_record() {
     printf "  UPDATE_IP : %s\n" "${UPDATE_IP}"
 
     if [ "${dns_ip}" != "${cmd_ip}" ]; then
+        printf "  Updating DNS record..."
         az network dns record-set a update --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}" --remove arecords 0  > /dev/null
         az network dns record-set a update --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}" --add arecords ipv4Address="${UPDATE_IP}"
-        printf "  Update completed\n"
+        printf "Done\n"
     else
         printf "  No update required\n"
     fi
@@ -35,7 +36,7 @@ printf "COMMAND_IP    : %s\n" "${COMMAND_IP}"
 [ -z "${TENANT_ID}" ] && >&2 echo "TENANT_ID is not set" && is_error="true"
 [ -z "${RESOURCE_GROUP}" ] && >&2 echo "RESOURCE_GROUP is not set" && is_error="true"
 [ -z "${DNSZONE}" ] && >&2 echo "DNSZONE is not set" && is_error="true"
-[ -z "${RECORD_NAME}" ] && >&2 echo "RECORD_NAME is not set" && is_error="true"
+[ -z "${RECORD_NAMES}" ] && >&2 echo "RECORD_NAME is not set" && is_error="true"
 [ -z "${COMMAND_IP}" ] && >&2 echo "COMMAND_IP is not set. Use default value 'curl -fsSL ipv4.icanhazip.com'"
 [ -n "${is_error}" ] && exit 90
 
@@ -43,4 +44,7 @@ printf "\nLogging in...\n"
 az login --service-principal -u "${CLIENT_ID}" -p "${CLIENT_SECRET}" --tenant "${TENANT_ID}" --output table
 
 CMD_IP=$(${COMMAND_IP:-"curl -fsSL ipv4.icanhazip.com"})
-check_and_update_dns_record "${RESOURCE_GROUP}" "${DNSZONE}" "${RECORD_NAME}" "${CMD_IP}"
+for record in "$RECORD_NAMES"
+do
+    check_and_update_dns_record "${RESOURCE_GROUP}" "${DNSZONE}" "${record}" "${CMD_IP}"
+done
