@@ -30,7 +30,7 @@ printf "CLIENT_SECRET : %s\n" "${CLIENT_SECRET}"
 printf "TENANT_ID     : %s\n" "${TENANT_ID}"
 printf "RESOURCE_GROUP: %s\n" "${RESOURCE_GROUP}"
 printf "DNSZONE       : %s\n" "${DNSZONE}"
-printf "RECORD_NAMES  : %s\n" "${RECORD_NAMES}"
+printf "RECORD_NAMES  : %s\n" "${RECORD_NAMES}" # shellcheck disable=SC2153
 printf "UPDATE_IP_CMD : %s\n" "${UPDATE_IP_CMD}"
 [ -z "${CLIENT_ID}" ] && >&2 echo "CLIENT_ID is not set" && is_error="true"
 [ -z "${CLIENT_SECRET}" ] && >&2 echo "CLIENT_SECRET is not set" && is_error="true"
