@@ -44,6 +44,6 @@ docker run --interactive --rm \
     -e RESOURCE_GROUP="rg-mygroup" \
     -e DNSZONE="mydomain.com" \
     -e RECORD_NAMES="subdomain1 subdomain2" \
-    -e COMMAND_IP="dig +short myotherdomain.com" \
+    -e UPDATE_IP_CMD="dig +short myotherdomain.com" \
     azure-ddns
 ```
