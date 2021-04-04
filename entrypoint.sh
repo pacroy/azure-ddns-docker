@@ -2,6 +2,16 @@
 set -o errexit
 set -o pipefail
 
+update_dns_record() {
+# Parameters
+# $1 = RESOURCE_GROUP
+# $2 = DNSZONE
+# $3 = RECORD_NAME
+# $4 = IP
+    az network dns record-set a update --resource-group "${1}" --zone-name "${2}" --name "${3}" --remove arecords 0  > /dev/null
+    az network dns record-set a update --resource-group "${1}" --zone-name "${2}" --name "${3}" --add arecords ipv4Address="${4}"
+}
+
 printf "\nChecking variables...\n"
 printf "CLIENT_ID     : ${CLIENT_ID}\n"
 printf "CLIENT_SECRET : ${CLIENT_SECRET}\n"
@@ -30,8 +40,7 @@ printf "  CMD IP: %s\n" "${cmd_ip}"
 
 if [ "${dns_ip}" != "${cmd_ip}" ]; then
     printf "\nUpdating IP...\n"
-    az network dns record-set a update --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}" --remove arecords 0  > /dev/null
-    az network dns record-set a update --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}" --add arecords ipv4Address="${cmd_ip}"
+    update_dns_record "${RESOURCE_GROUP}" "${DNSZONE}" "${RECORD_NAME}" "${cmd_ip}"
 else
     printf "\nNo update required\n"
     az network dns record-set a show --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}"
