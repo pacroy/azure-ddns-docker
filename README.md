@@ -11,12 +11,23 @@ Docker image to update Azure DNS records to mimic Dynamic DNS service.
 If you don't have a service principal yet, you may create a new one as we will use it to query and update Azure DNS records.
 
 ```sh
-az ad sp create-for-rbac --name "<APP_ID_URI>" --role Contributor --scope "<RESOURCE_ID>"
+az ad sp create-for-rbac --name "<APP_ID_URI>" --role "Contributor" --scope "<RESOURCE_ID>"
 ```
 
 | Parameter | Description |
 | --- | --- |
-| APP_ID_URI | Application ID URI<br />Example: `sp://ddns-updater` |
+| APP_ID_URI | Service principal's application ID URI<br />Example: `sp://ddns-updater` |
+| RESOURCE_ID | DNS Zone Resource ID<br />Example: `/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/rg-mygroup/providers/Microsoft.Network/dnszones/mydomain.com` |
+
+In case you already have one, you may want to add role assignment so it can query and update Azure DNS records.
+
+```sh
+az role assignment create --assignee "<APP_ID>" --role "Contributor" --scope "<RESOURCE_ID>"
+```
+
+| Parameter | Description |
+| --- | --- |
+| APP_ID | Service principal's application ID URI or ID URI |
 | RESOURCE_ID | DNS Zone Resource ID<br />Example: `/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/rg-mygroup/providers/Microsoft.Network/dnszones/mydomain.com` |
 
 ### Get Image
