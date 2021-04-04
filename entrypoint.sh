@@ -2,14 +2,24 @@
 set -o errexit
 set -o pipefail
 
-update_dns_record() {
-# Parameters
+check_and_update_dns_record() {
     local RESOURCE_GROUP="$1"
     local DNSZONE="$2"
     local RECORD_NAME="$3"
-    local IP="$4"
-    az network dns record-set a update --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}" --remove arecords 0  > /dev/null
-    az network dns record-set a update --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}" --add arecords ipv4Address="${IP}"
+    local UPDATE_IP="$4"
+
+    local CURRENT_IP=$(az network dns record-set a show --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}" | jq -r '.arecords[0].ipv4Address')
+    printf "\nChecking DNS record '%s'...\n" "${RECORD_NAME}"
+    printf "  CURRENT_IP: %s\n" "${CURRENT_IP}"
+    printf "  UPDATE_IP : %s\n" "${UPDATE_IP}"
+
+    if [ "${dns_ip}" != "${cmd_ip}" ]; then
+        az network dns record-set a update --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}" --remove arecords 0  > /dev/null
+        az network dns record-set a update --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}" --add arecords ipv4Address="${UPDATE_IP}"
+        printf "\nUpdate completed\n"
+    else
+        printf "\nNo update required\n"
+    fi
 }
 
 printf "\nChecking variables...\n"
@@ -32,16 +42,5 @@ echo "COMMAND_IP    : ${COMMAND_IP}\n"
 printf "\nLogging in...\n"
 az login --service-principal -u "${CLIENT_ID}" -p "${CLIENT_SECRET}" --tenant "${TENANT_ID}" --output table
 
-printf "\nChecking IP...\n"
-dns_ip=$(az network dns record-set a show --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}" | jq -r '.arecords[0].ipv4Address')
-cmd_ip=$(${COMMAND_IP:-"curl -fsSL ipv4.icanhazip.com"})
-printf "  DNS IP: %s\n" "${dns_ip}"
-printf "  CMD IP: %s\n" "${cmd_ip}"
-
-if [ "${dns_ip}" != "${cmd_ip}" ]; then
-    printf "\nUpdating IP...\n"
-    update_dns_record "${RESOURCE_GROUP}" "${DNSZONE}" "${RECORD_NAME}" "${cmd_ip}"
-else
-    printf "\nNo update required\n"
-    az network dns record-set a show --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}"
-fi
+CMD_IP=$(${COMMAND_IP:-"curl -fsSL ipv4.icanhazip.com"})
+check_and_update_dns_record "${RESOURCE_GROUP}" "${DNSZONE}" "${RECORD_NAME}" "${CMD_IP}"
