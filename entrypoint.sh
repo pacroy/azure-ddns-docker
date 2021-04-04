@@ -4,12 +4,12 @@ set -o pipefail
 
 update_dns_record() {
 # Parameters
-# $1 = RESOURCE_GROUP
-# $2 = DNSZONE
-# $3 = RECORD_NAME
-# $4 = IP
-    az network dns record-set a update --resource-group "${1}" --zone-name "${2}" --name "${3}" --remove arecords 0  > /dev/null
-    az network dns record-set a update --resource-group "${1}" --zone-name "${2}" --name "${3}" --add arecords ipv4Address="${4}"
+    local RESOURCE_GROUP="$1"
+    local DNSZONE="$2"
+    local RECORD_NAME="$3"
+    local IP="$4"
+    az network dns record-set a update --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}" --remove arecords 0  > /dev/null
+    az network dns record-set a update --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}" --add arecords ipv4Address="${IP}"
 }
 
 printf "\nChecking variables...\n"
