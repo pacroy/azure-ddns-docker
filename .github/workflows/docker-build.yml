@@ -29,8 +29,8 @@ jobs:
             -e TENANT_ID="${{ secrets.TENANT_ID }}" \
             -e RESOURCE_GROUP="${{ secrets.RESOURCE_GROUP }}" \
             -e DNSZONE="${{ secrets.DNSZONE }}" \
-            -e RECORD_NAME="${{ secrets.RECORD_NAME }}" \
-            -e COMMAND_IP="${{ secrets.COMMAND_IP }}" \
+            -e RECORD_NAMES="${{ secrets.RECORD_NAMES }}" \
+            -e UPDATE_IP_CMD="${{ secrets.UPDATE_IP_CMD }}" \
             ${IMAGE_NAME}:${GITHUB_SHA}
       - name: Docker Push
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}

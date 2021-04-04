@@ -43,7 +43,7 @@ docker run --interactive --rm \
     -e TENANT_ID="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" \
     -e RESOURCE_GROUP="rg-mygroup" \
     -e DNSZONE="mydomain.com" \
-    -e RECORD_NAME="@" \
-    -e COMMAND_IP="dig +short myotherdomain.com" \
+    -e RECORD_NAMES="subdomain1 subdomain2" \
+    -e UPDATE_IP_CMD="dig +short myotherdomain.com" \
     azure-ddns
 ```
