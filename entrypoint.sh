@@ -45,7 +45,7 @@ az login --service-principal -u "${CLIENT_ID}" -p "${CLIENT_SECRET}" --tenant "$
 
 printf "\nGetting update IP...\n"
 UPDATE_IP=$(${UPDATE_IP_CMD:-"curl -fsSL ipv4.icanhazip.com"})
-[ -z "UPDATE_IP" ] && >&2 echo "Failed to get the update IP" && exit 91
+[ -z "${UPDATE_IP}" ] && >&2 echo "Failed to get the update IP" && exit 91
 
 for record in "$RECORD_NAMES"
 do
