@@ -13,7 +13,7 @@ check_and_update_dns_record() {
     printf "  CURRENT_IP: %s\n" "${CURRENT_IP}"
     printf "  UPDATE_IP : %s\n" "${UPDATE_IP}"
 
-    if [ "${dns_ip}" != "${cmd_ip}" ]; then
+    if [ "${CURRENT_IP}" != "${UPDATE_IP}" ]; then
         printf "  Updating DNS record..."
         az network dns record-set a update --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}" --remove arecords 0  > /dev/null
         az network dns record-set a update --resource-group "${RESOURCE_GROUP}" --zone-name "${DNSZONE}" --name "${RECORD_NAME}" --add arecords ipv4Address="${UPDATE_IP}"
