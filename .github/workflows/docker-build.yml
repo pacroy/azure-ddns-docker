@@ -19,7 +19,7 @@ jobs:
       - name: Docker build
         shell: bash
         run: |
-          docker build -t ${IMAGE_NAME}:${GITHUB_SHA} .
+          docker build -t ${IMAGE_NAME}:${GITHUB_SHA:0:7} .
       - name: Test Image
         shell: bash
         run: |
@@ -31,7 +31,7 @@ jobs:
             -e DNSZONE="${{ secrets.DNSZONE }}" \
             -e RECORD_NAMES="${{ secrets.RECORD_NAMES }}" \
             -e UPDATE_IP_CMD="${{ secrets.UPDATE_IP_CMD }}" \
-            ${IMAGE_NAME}:${GITHUB_SHA}
+            ${IMAGE_NAME}:${GITHUB_SHA:0:7}
       - name: Docker Push
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         shell: bash
@@ -43,12 +43,12 @@ jobs:
           echo "REPOSITORY_OWNER : ${REPOSITORY_OWNER}"
           echo "REGISTRY_HOSTNAME: ${REGISTRY_HOSTNAME}"
           echo "GITHUB_ACTOR     : ${GITHUB_ACTOR}"
-          echo "GITHUB_SHA       : ${GITHUB_SHA}"
+          echo "GITHUB_SHA       : ${GITHUB_SHA:0:7}"
           echo "::endgroup::"
 
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://${REGISTRY_HOSTNAME} -u "${GITHUB_ACTOR}" --password-stdin
-          docker tag ${IMAGE_NAME}:${GITHUB_SHA} ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/${IMAGE_NAME}:${GITHUB_SHA}
-          docker push ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/${IMAGE_NAME}:${GITHUB_SHA}
-          docker tag ${IMAGE_NAME}:${GITHUB_SHA} ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/${IMAGE_NAME}:latest
+          docker tag ${IMAGE_NAME}:${GITHUB_SHA:0:7} ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/${IMAGE_NAME}:${GITHUB_SHA:0:7}
+          docker push ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/${IMAGE_NAME}:${GITHUB_SHA:0:7}
+          docker tag ${IMAGE_NAME}:${GITHUB_SHA:0:7} ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/${IMAGE_NAME}:latest
           docker push ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/${IMAGE_NAME}:latest
           docker logout https://${REGISTRY_HOSTNAME}
