@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-20.04
     env:
       IMAGE_NAME: azure-ddns
+      REPOSITORY_OWNER: ${{ github.repository_owner }}
+      REGISTRY_HOSTNAME: ghcr.io
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
@@ -32,12 +34,8 @@ jobs:
             -e RECORD_NAMES="${{ secrets.RECORD_NAMES }}" \
             -e UPDATE_IP_CMD="${{ secrets.UPDATE_IP_CMD }}" \
             ${IMAGE_NAME}:${GITHUB_SHA:0:7}
-      - name: Docker Push
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+      - name: Docker Login and Tag
         shell: bash
-        env:
-          REPOSITORY_OWNER: ${{ github.repository_owner }}
-          REGISTRY_HOSTNAME: ghcr.io
         run: |
           echo "::group::Parameters"
           echo "REPOSITORY_OWNER : ${REPOSITORY_OWNER}"
@@ -48,7 +46,15 @@ jobs:
 
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://${REGISTRY_HOSTNAME} -u "${GITHUB_ACTOR}" --password-stdin
           docker tag ${IMAGE_NAME}:${GITHUB_SHA:0:7} ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/${IMAGE_NAME}:${GITHUB_SHA:0:7}
-          docker push ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/${IMAGE_NAME}:${GITHUB_SHA:0:7}
           docker tag ${IMAGE_NAME}:${GITHUB_SHA:0:7} ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/${IMAGE_NAME}:latest
+      - name: Docker Login and Tag
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        shell: bash
+        run: |
+          docker push ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/${IMAGE_NAME}:${GITHUB_SHA:0:7}
           docker push ${REGISTRY_HOSTNAME}/${REPOSITORY_OWNER}/${IMAGE_NAME}:latest
+      - name: Docker Logout
+        shell: bash
+        run: |
           docker logout https://${REGISTRY_HOSTNAME}
+          
